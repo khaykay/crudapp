@@ -1,10 +1,11 @@
 import "./App.css";
-import Main from "./components/Main";
-
+import HomePage from "./components/HomePage";
+import TopBar from "./components/TopBar";
 function App() {
   return (
     <div className="App">
-      <Main />
+      <TopBar />
+      <HomePage />
     </div>
   );
 }
