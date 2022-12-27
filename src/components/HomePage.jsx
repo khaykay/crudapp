@@ -10,14 +10,59 @@ function Main() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+
+  const fetchFavourite = async() =>{
+    let localStorageFavourite = localStorage.getItem("favourite")
+    localStorageFavourite= JSON.parse(localStorageFavourite)
+    return localStorageFavourite
+
+  }
   const fetchData = async () => {
+    let localStorageData = localStorage.getItem("countries") 
+      ? localStorage.getItem("countries")
+      : false;
+
+    localStorageData = localStorageData ? JSON.parse(localStorageData) : [];
+
     try {
       setError(false);
       setLoading(true);
-      let response = await fetch("https://restcountries.com/v2/all");
-      let countries = await response.json();
-      console.log(countries);
-      setCountries(countries);
+      let slicedcountries = [];
+      if(localStorageData.length < 1){
+        let response = await fetch("https://restcountries.com/v2/all");
+        let countries = await response.json();
+         slicedcountries = countries.slice(0, 21);
+      }
+
+      const mainData =
+        localStorageData.length < 1 ? slicedcountries : localStorageData;
+        const favouriteData = await fetchFavourite()
+       
+      const countrymapping = mainData.map((country) => {
+      const modifiedData = favouriteData.map((data)=>{
+      return{
+        ...country, 
+        favourite: country.alpha3code === data.alpha3code ? true : false
+      }
+      })
+
+     
+      // console.log(modifiedData);
+      
+              return {
+                ...country,
+                favourite : flag
+              };
+              
+            });
+            console.log(countrymapping);
+      
+      if (localStorageData.length < 1){
+        localStorage.setItem("countries", JSON.stringify(countrymapping));
+
+      }
+      setCountries(countrymapping);
       setLoading(false);
     } catch (err) {
       console.log(err);
